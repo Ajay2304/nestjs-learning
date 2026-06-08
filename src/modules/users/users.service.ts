@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  private db: any[] = [];
+
+  createUser(name:string,email:string){
+    const user ={
+      userID:this.db.length+1,
+      name,
+      email,
+
+    } 
+    this.db.push(user);
+    
+    return user;
+
+  }
+  getUsers(){
+    console.log(this.db);
+    return this.db;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  getById(id:number){
+    const user=this.db.find(user=>user.userID===id);
+    if(!user){
+      return  "User not Found";
+    }else{
+      return user;
+    }
+    
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  updateUser(ID:number,name:string,email:string){
+    const user=this.db.find(user=>user.userID===ID);
+    if(!user){
+      return  "User not Found";
+    }else{
+      user.name=name;
+      user.email=email;
+      return user;
+    }
+  }
+  deleteUser(id: number){
+    const userIndex = this.db.findIndex(user=>user.userID===id);
+    if(userIndex === -1){
+      return  "User not Found";
+    }else{
+      const deletedUser = this.db[userIndex];
+      this.db.splice(userIndex, 1);
+      return deletedUser + "This user has been deleted successfully";
+      
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-}
+};
